@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+  margin-bottom: 24px;
+
+  & > div {
+    display: flex;
+    flex-grow: 1;
+
+    & > div {
+      &:last-of-type {
+        padding-left: 16px;
+      }
+    }
+  }
+
+}

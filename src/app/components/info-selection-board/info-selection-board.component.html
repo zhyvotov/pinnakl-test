@@ -1,2 +1,15 @@
-<div>{{ selectedCountriesCount }} / <b>{{ totalCountries }}</b></div>
-<div>{{ selectedCitiesCount }} / <b>{{ totalCities }}</b></div>
+<div>
+  <div>
+    <div>Num of selected countries / <b>total countries in response</b></div>
+    <div>Num of cities available to select (in multiselect) / <b>total cities in response.</b></div>
+    <div>Num of selected cities / <b>number of available cities to select (in multiselect).</b></div>
+    <div>Num of selected cities / <b>total cities in response.</b></div>
+  </div>
+
+  <div>
+    <div>{{ selectedCountriesCount }} / <b>{{ totalCountries }}</b></div>
+    <div>{{ totalCities - selectedCitiesCount }} / <b>{{ totalCities }}</b></div>
+    <div>{{ selectedCitiesCount }} / <b>{{ totalCities - selectedCitiesCount }}</b></div>
+    <div>{{ selectedCitiesCount }} / <b>{{ totalCities }}</b></div>
+  </div>
+</div>

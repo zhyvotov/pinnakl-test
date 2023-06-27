@@ -18,4 +18,12 @@ export class InfoBoardContainerComponent implements OnInit{
     this.citiesService.fetchCities();
   }
 
+  onCitiesSelect(data: string[]): void {
+    this.citiesService.selectCities(data);
+  }
+
+  onCountriesSelect(data: string[]): void {
+    this.citiesService.selectCountries(data);
+  }
+
 }

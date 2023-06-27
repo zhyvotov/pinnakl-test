@@ -1,6 +1,30 @@
 <app-info-selection-board
-  [selectedCountriesCount]="0"
-  [totalCountries]="citiesService.totalCountries$ | async"
-  [selectedCitiesCount]="0"
-  [totalCities]="citiesService.totalCities$ | async"
+  [selectedCountriesCount]="(citiesService.selectedCountries$ | async)?.length ?? 0"
+  [totalCountries]="(citiesService.countries$ | async)?.length ?? 0"
+  [selectedCitiesCount]="(citiesService.selectedCities$ | async)?.length ?? 0"
+  [totalCities]="(citiesService.cities$ | async)?.length ?? 0"
 ></app-info-selection-board>
+
+<div class="multi-select-wrapper">
+
+  <div>
+    <label>Countries</label>
+    <app-multi-select
+      [title]="'Select countries'"
+      [items]="citiesService.countries$ | async"
+      (selectItems)="onCountriesSelect($event)"
+    ></app-multi-select>
+  </div>
+
+
+  <div>
+    <label>Cities</label>
+    <app-multi-select
+      [title]="'Select cities'"
+      [items]="citiesService.filteredCities$ | async"
+      [isDisabled]="!(citiesService.selectedCountries$ | async)?.length"
+      (selectItems)="onCitiesSelect($event)"
+    ></app-multi-select>
+  </div>
+
+</div>

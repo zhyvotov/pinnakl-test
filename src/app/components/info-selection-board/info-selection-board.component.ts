@@ -8,9 +8,9 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class InfoSelectionBoardComponent {
 
-  @Input() selectedCountriesCount!: number | null;
-  @Input() totalCountries!: number | null;
-  @Input() selectedCitiesCount!: number | null;
-  @Input() totalCities!: number | null;
+  @Input() selectedCountriesCount!: number;
+  @Input() totalCountries!: number;
+  @Input() selectedCitiesCount!: number;
+  @Input() totalCities!: number;
 
 }

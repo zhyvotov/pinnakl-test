@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { CitiesApiService } from './cities-api.service';
-import { BehaviorSubject, Observable, share } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, share, shareReplay } from 'rxjs';
 import { ICity } from '../shared';
 
 
@@ -13,24 +13,35 @@ export class CitiesService {
   cities$: Observable<ICity[]>;
   #citiesSubject$ = new BehaviorSubject<ICity[]>([]);
 
-  totalCities$: Observable<number>;
-  #totalCitiesSubject$ = new BehaviorSubject<number>(0);
+  cityNames$: Observable<string[]>;
+  #cityNamesSubject$ = new BehaviorSubject<string[]>([]);
+
+  cityDictionary$: Observable<Record<string, string>>;
+  #cityDictionarySubject = new BehaviorSubject<Record<string, string>>({});
+
+  filteredCities$: Observable<string[]>;
+  #filteredCitiesSubject$ = new BehaviorSubject<string[]>([]);
+
+  selectedCities$: Observable<string[]>;
+  #selectedCitiesSubject$ = new BehaviorSubject<string[]>([]);
 
   countries$: Observable<string[]>;
   #countriesSubject$ = new BehaviorSubject<string[]>([]);
 
-  totalCountries$: Observable<number>;
-  #totalCountriesSubject$ = new BehaviorSubject<number>(0);
+  selectedCountries$: Observable<string[]>;
+  #selectedCountriesSubject$ = new BehaviorSubject<string[]>([]);
 
   constructor(
     private citiesApiService: CitiesApiService
   ) {
     this.cities$ = this.#citiesSubject$.asObservable();
-    this.totalCities$ = this.#totalCitiesSubject$.asObservable();
+    this.selectedCities$ = this.#selectedCitiesSubject$.asObservable();
+    this.cityNames$ = this.#cityNamesSubject$.asObservable();
+    this.cityDictionary$ = this.#cityDictionarySubject.asObservable();
+    this.filteredCities$ = this.#filteredCitiesSubject$.asObservable();
     this.countries$ = this.#countriesSubject$.asObservable();
-    this.totalCountries$ = this.#totalCountriesSubject$.asObservable();
-
-    this._initObservables();
+    this.selectedCountries$ = this.#selectedCountriesSubject$.asObservable();
+    this.filteredCities$ = this._getFilteredCities();
   }
 
   fetchCities(): Observable<ICity[]> {
@@ -38,22 +49,48 @@ export class CitiesService {
 
     result.subscribe((data: ICity[]) => {
       const countries = this._getUniqueCountries(data);
+      const cityDictionary = this._getCityDictionary(data);
 
       this.#citiesSubject$.next(data);
-      this.#totalCitiesSubject$.next(data.length);
+      this.#cityNamesSubject$.next(data.map((city) => city.name));
       this.#countriesSubject$.next(countries);
-      this.#totalCountriesSubject$.next(countries.length);
+      this.#cityDictionarySubject.next(cityDictionary);
     });
 
     return result;
   }
 
-  private _initObservables(): void {
+  selectCities(data: string[]): void {
+    this.#selectedCitiesSubject$.next(data);
+  }
 
+  selectCountries(data: string[]): void {
+    this.#selectedCountriesSubject$.next(data);
   }
 
   private _getUniqueCountries(cities: ICity[]): string[] {
     return [...new Set(cities.map((item: ICity) => item.country))];
+  }
+
+  private _getFilteredCities(): Observable<string[]> {
+    return combineLatest([
+      this.cities$,
+      this.selectedCountries$
+    ]).pipe(
+      map(([cities, selectedCountries]) => {
+        return cities
+          .filter((city: ICity) => selectedCountries.includes(city.country))
+          .map((city) => city.name).sort((a, b) => a.localeCompare(b));
+      }),
+      shareReplay(1)
+    )
+  }
+
+  private _getCityDictionary(data: ICity[]): Record<string, string> {
+    return data.reduce((acc: Record<string, string>, city: ICity) => {
+      acc[city.name] = city.country;
+      return acc;
+    }, {});
   }
 
 }

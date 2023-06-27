@@ -1,0 +1,16 @@
+.multi-select-wrapper {
+  display: flex;
+
+  & > div {
+    flex-grow: 1;
+
+    &:first-child {
+      margin-right: 24px;
+    }
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+  }
+}

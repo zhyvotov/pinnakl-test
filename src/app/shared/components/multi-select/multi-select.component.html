@@ -1,1 +1,14 @@
-<p>multi-select works!</p>
+<mat-form-field class="frameworks-select" appearance="outline">
+  <mat-select
+    [formControl]="multiSelectControl"
+    [placeholder]="title ?? ''"
+    panelClass="multiselect"
+    disableRipple
+    disableOptionCentering
+    multiple>
+    <mat-option *ngFor="let item of items"
+                [value]="item">
+      {{ item }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
